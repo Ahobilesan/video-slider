@@ -1,1 +1,139 @@
-class VideoSlider extends HTMLElement{connectedCallback(){console.log("connected callback"),this.render(),this.init()}init(){const e=900,n=document.getElementById("blockScroll"),t=document.getElementById("video"),i=document.getElementById("wrapper"),o=document.getElementById("video-wrapper");t.addEventListener("loadedmetadata",()=>n.style.height=Math.floor(t.duration)*e+"px"),o.addEventListener("wheel",e=>i.scrollTop=i.scrollTop+e.deltaY),window.requestAnimationFrame(function n(){t.currentTime=i.scrollTop/e,function(e){const n=document.getElementById("text-1"),t=document.getElementById("text-2"),i=document.getElementById("text-3");e>0&&e<3?n.classList.add("show"):n.classList.remove("show"),e>3&&e<6?t.classList.add("show"):t.classList.remove("show"),e>6&&e<8?i.classList.add("show"):i.classList.remove("show")}(i.scrollTop/e),window.requestAnimationFrame(n)})}render(){this.innerHTML='<div id="wrapper">\n    <style>\n      #blockScroll {\n        display: block;\n      }\n      #video {\n        height: 65%;\n        display: block;\n        margin: auto;\n      }\n      .cpp-text-block {\n        padding: 0 3em;\n        text-align: center;\n        color: #fff;\n      }\n      .cpp-text-block-description {\n        color: #fff;\n        text-align: center;\n        text-transform: uppercase;\n        padding-bottom: 20px;\n        font-family: Kanit, sans-serif;\n        font-size: 20px;\n        line-height: 30px;\n      }\n      .cpp-text-block-header {\n        color: #fff;\n        text-align: center;\n        text-transform: uppercase;\n        margin-bottom: 50px;\n        font-family: Bad Habits, sans-serif;\n        font-size: 50px;\n        line-height: 40px;\n      }\n      .show {\n        display: block !important;\n        width: 100%;\n      }\n      .hide {\n        display: none;\n      }\n      #wrapper {\n        height: 100vh;\n        width: 100%;\n        overflow: auto;\n        display: flex;\n        justify-content: center;\n        background-color: #1e3930;\n      }\n      #video-wrapper {\n        position: absolute;\n        top: 0;\n        z-index: 10;\n        height: 100vh;\n        width: 100%;\n      } \n    </style>\n    <div id="blockScroll"></div>\n    <div id="video-wrapper"><div class="cpp-text-block-description">the gateway to our backing</div>\n    <div class="cpp-text-block-header">climate performance<br>potential cpp</div>\n      <div class="cpp-text-block">\n        <div id="text-1" class="cpp-text-block-description hide">First, we quantitatively analyze the potential CO2e savings of a startup’s technology, including a life-cycle assessment.</div>\n        <div id="text-2" class="cpp-text-block-description hide">Second, we take a qualitative assessment on environmental and social impact, utilizing the IRIS+ metrics.</div>\n        <div id="text-3" class="cpp-text-block-description hide">Lastly, the technology needs to fit into our vision of a regenerative world, based on four pillars:<br/>\n        Renewable energy, Full material circularity, Regenerative systems, Climate & social equity</div>\n      </div>\n      <video\n        id="video"\n        playsinline\n        muted\n        preload="auto"\n        poster="https://lh3.googleusercontent.com/u/0/drive-viewer/AAOQEOQ_3AafdWAjB80tWSTcwTttK_dRhkTqbqntDdo-TWIKCEtZ-BGnDV93uZ8gRMuFUm0ZFqd4WN2qG5ysiAPFIo7l7Y3K=w1661-h953"\n      >\n        <source\n          type="video/mp4"\n          src="https://drive.google.com/uc?id=1On40pTelPp4ZEBZI6LZghheTkpMznBsy"\n          data-src="https://drive.google.com/uc?id=1On40pTelPp4ZEBZI6LZghheTkpMznBsy"\n        />\n      </video>\n    </div>\n  </div>'}}window.customElements.define("video-slider",VideoSlider);
+class VideoSlider extends HTMLElement {
+  connectedCallback() {
+    console.log("connected callback");
+    this.render();
+    this.init();
+  }
+  init() {
+    const cpp_playbackConst = 900,
+      cpp_block = document.getElementById("blockScroll"),
+      cpp_video = document.getElementById("cpp-video"),
+      cpp_wrapper = document.getElementById("cpp-wrapper"),
+      cpp_vWrapper = document.getElementById("video-wrapper");
+    cpp_video.addEventListener(
+      "loadedmetadata",
+      () =>
+        (cpp_block.style.height = Math.floor(cpp_video.duration) * cpp_playbackConst + "px")
+    );
+
+    cpp_vWrapper.addEventListener(
+      "wheel",
+      (e) => (cpp_wrapper.scrollTop = cpp_wrapper.scrollTop + e.deltaY)
+    );
+
+    function toggleText(val) {
+      const cpp_text1 = document.getElementById("cpp-text-1"),
+        cpp_text2 = document.getElementById("cpp-text-2"),
+        cpp_text3 = document.getElementById("cpp-text-3");
+
+      if (val > 0 && val < 3) {
+        cpp_text1.classList.add("cpp-show");
+      } else {
+        cpp_text1.classList.remove("cpp-show");
+      }
+      if (val > 3 && val < 6) {
+        cpp_text2.classList.add("cpp-show");
+      } else {
+        cpp_text2.classList.remove("cpp-show");
+      }
+      if (val > 6 && val < 8) {
+        cpp_text3.classList.add("cpp-show");
+      } else {
+        cpp_text3.classList.remove("cpp-show");
+      }
+    }
+
+    function handleScroll() {
+      cpp_video.currentTime = cpp_wrapper.scrollTop / cpp_playbackConst;
+      toggleText(cpp_wrapper.scrollTop / cpp_playbackConst);
+
+      window.requestAnimationFrame(handleScroll);
+    }
+
+    window.requestAnimationFrame(handleScroll);
+  }
+  render() {
+    this.innerHTML = `<div id="cpp-wrapper">
+    <style>
+      #blockScroll {
+        display: block;
+      }
+      #cpp-video {
+        height: 65%;
+        display: block;
+        margin: auto;
+      }
+      .cpp-text-block {
+        padding: 0 3em;
+        text-align: center;
+        color: #fff;
+      }
+      .cpp-text-block-description {
+        color: #fff;
+        text-align: center;
+        text-transform: uppercase;
+        padding-bottom: 20px;
+        font-family: Kanit, sans-serif;
+        font-size: 20px;
+        line-height: 30px;
+      }
+      .cpp-text-block-header {
+        color: #fff;
+        text-align: center;
+        text-transform: uppercase;
+        margin-bottom: 50px;
+        font-family: Bad Habits, sans-serif;
+        font-size: 50px;
+        line-height: 40px;
+      }
+      .cpp-show {
+        display: block !important;
+        width: 100%;
+      }
+      .cpp-hide {
+        display: none;
+      }
+      #cpp-wrapper {
+        height: 100vh;
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        justify-content: center;
+        background-color: #1e3930;
+      }
+      #video-wrapper {
+        position: absolute;
+        top: 0;
+        z-index: 10;
+        height: 100vh;
+        width: 100%;
+      } 
+    </style>
+    <div id="blockScroll"></div>
+    <div id="video-wrapper"><div class="cpp-text-block-description">the gateway to our backing</div>
+    <div class="cpp-text-block-header">climate performance<br>potential cpp</div>
+      <div class="cpp-text-block">
+        <div id="cpp-text-1" class="cpp-text-block-description cpp-hide">First, we quantitatively analyze the potential CO2e savings of a startup’s technology, including a life-cycle assessment.</div>
+        <div id="cpp-text-2" class="cpp-text-block-description cpp-hide">Second, we take a qualitative assessment on environmental and social impact, utilizing the IRIS+ metrics.</div>
+        <div id="cpp-text-3" class="cpp-text-block-description cpp-hide">Lastly, the technology needs to fit into our vision of a regenerative world, based on four pillars:<br/>
+        Renewable energy, Full material circularity, Regenerative systems, Climate & social equity</div>
+      </div>
+      <video
+        id="cpp-video"
+        playsinline
+        muted
+        preload="auto"
+        poster="https://lh3.googleusercontent.com/u/0/drive-viewer/AAOQEOQ_3AafdWAjB80tWSTcwTttK_dRhkTqbqntDdo-TWIKCEtZ-BGnDV93uZ8gRMuFUm0ZFqd4WN2qG5ysiAPFIo7l7Y3K=w1661-h953"
+      >
+        <source
+          type="video/mp4"
+          src="https://drive.google.com/uc?id=1On40pTelPp4ZEBZI6LZghheTkpMznBsy"
+          data-src="https://drive.google.com/uc?id=1On40pTelPp4ZEBZI6LZghheTkpMznBsy"
+        />
+      </video>
+    </div>
+  </div>`;
+  }
+}
+
+window.customElements.define("video-slider", VideoSlider);
