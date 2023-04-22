@@ -1,25 +1,30 @@
 class VideoSlider extends HTMLElement {
+  maxScroll = 0;
   connectedCallback() {
-    console.log("connected callback");
     this.render();
     this.init();
   }
   init() {
     const cpp_playbackConst = 900,
-      cpp_block = document.getElementById("blockScroll"),
+      cpp_block = document.getElementById("cpp-slider"),
       cpp_video = document.getElementById("cpp-video"),
-      cpp_wrapper = document.getElementById("cpp-wrapper"),
-      cpp_vWrapper = document.getElementById("video-wrapper");
-    cpp_video.addEventListener(
-      "loadedmetadata",
-      () =>
-        (cpp_block.style.height = Math.floor(cpp_video.duration) * cpp_playbackConst + "px")
-    );
+      cpp_wrapper = document.getElementById("cpp-slider-wrapper");
 
-    cpp_vWrapper.addEventListener(
-      "wheel",
-      (e) => (cpp_wrapper.scrollTop = cpp_wrapper.scrollTop + e.deltaY)
-    );
+    cpp_video.addEventListener("loadedmetadata", () => {
+      this.maxScroll = Math.floor(cpp_video.duration) * cpp_playbackConst;
+      cpp_block.style.height = this.maxScroll + "px";
+    });
+
+    let scrollTop = 0;
+    cpp_wrapper.addEventListener("wheel", ({ deltaY }) => {
+      const scrollValue = scrollTop + deltaY;
+      if (scrollValue < this.maxScroll) {
+        scrollTop = scrollValue;
+      }
+      if (scrollValue < 1) {
+        scrollTop = 0;
+      }
+    });
 
     function toggleText(val) {
       const cpp_text1 = document.getElementById("cpp-text-1"),
@@ -44,8 +49,8 @@ class VideoSlider extends HTMLElement {
     }
 
     function handleScroll() {
-      cpp_video.currentTime = cpp_wrapper.scrollTop / cpp_playbackConst;
-      toggleText(cpp_wrapper.scrollTop / cpp_playbackConst);
+      cpp_video.currentTime = scrollTop / cpp_playbackConst;
+      toggleText(scrollTop / cpp_playbackConst);
 
       window.requestAnimationFrame(handleScroll);
     }
@@ -53,70 +58,67 @@ class VideoSlider extends HTMLElement {
     window.requestAnimationFrame(handleScroll);
   }
   render() {
-    this.innerHTML = `<div id="cpp-wrapper">
-    <style>
-      #blockScroll {
-        display: block;
-      }
-      #cpp-video {
-        height: 65%;
-        display: block;
-        margin: auto;
-      }
-      .cpp-text-block {
-        padding: 0 3em;
-        text-align: center;
-        color: #fff;
-      }
-      .cpp-text-block-description {
-        color: #fff;
-        text-align: center;
-        text-transform: uppercase;
-        padding-bottom: 20px;
-        font-family: Kanit, sans-serif;
-        font-size: 20px;
-        line-height: 30px;
-      }
-      .cpp-text-block-header {
-        color: #fff;
-        text-align: center;
-        text-transform: uppercase;
-        margin-bottom: 50px;
-        font-family: Bad Habits, sans-serif;
-        font-size: 50px;
-        line-height: 40px;
-      }
-      .cpp-show {
-        display: block !important;
-        width: 100%;
-      }
-      .cpp-hide {
-        display: none;
-      }
-      #cpp-wrapper {
-        height: 100vh;
-        width: 100%;
-        overflow: auto;
-        display: flex;
-        justify-content: center;
-        background-color: #1e3930;
-      }
-      #video-wrapper {
-        position: absolute;
-        top: 0;
-        z-index: 10;
-        height: 100vh;
-        width: 100%;
-      } 
-    </style>
-    <div id="blockScroll"></div>
-    <div id="video-wrapper"><div class="cpp-text-block-description">the gateway to our backing</div>
-    <div class="cpp-text-block-header">climate performance<br>potential cpp</div>
+    this.innerHTML = `<div id="cpp-slider-wrapper">
+      <style>
+        #cpp-slider-wrapper {
+          top: 0;
+          position: sticky;
+        }
+        #cpp-video {
+          height: 65%;
+          display: block;
+          margin: auto;
+        }
+        .cpp-text-block {
+          padding: 0 3em;
+          text-align: center;
+          color: #fff;
+        }
+        .cpp-text-block-description {
+          color: #fff;
+          text-align: center;
+          text-transform: uppercase;
+          padding-bottom: 20px;
+          font-family: Kanit, sans-serif;
+          font-size: 20px;
+          line-height: 30px;
+        }
+        .cpp-text-block-header {
+          color: #fff;
+          text-align: center;
+          text-transform: uppercase;
+          margin-bottom: 50px;
+          font-family: Bad Habits, sans-serif;
+          font-size: 50px;
+          line-height: 40px;
+        }
+        .cpp-show {
+          display: block !important;
+          width: 100%;
+        }
+        .cpp-hide {
+          display: none;
+        }
+      </style>
+      <div class="cpp-text-block-description">the gateway to our backing</div>
+      <div class="cpp-text-block-header">
+        climate performance<br />potential cpp
+      </div>
       <div class="cpp-text-block">
-        <div id="cpp-text-1" class="cpp-text-block-description cpp-hide">First, we quantitatively analyze the potential CO2e savings of a startup’s technology, including a life-cycle assessment.</div>
-        <div id="cpp-text-2" class="cpp-text-block-description cpp-hide">Second, we take a qualitative assessment on environmental and social impact, utilizing the IRIS+ metrics.</div>
-        <div id="cpp-text-3" class="cpp-text-block-description cpp-hide">Lastly, the technology needs to fit into our vision of a regenerative world, based on four pillars:<br/>
-        Renewable energy, Full material circularity, Regenerative systems, Climate & social equity</div>
+        <div id="cpp-text-1" class="cpp-text-block-description cpp-hide">
+          First, we quantitatively analyze the potential CO2e savings of a startup’s
+          technology, including a life-cycle assessment.
+        </div>
+        <div id="cpp-text-2" class="cpp-text-block-description cpp-hide">
+          Second, we take a qualitative assessment on environmental and social
+          impact, utilizing the IRIS+ metrics.
+        </div>
+        <div id="cpp-text-3" class="cpp-text-block-description cpp-hide">
+          Lastly, the technology needs to fit into our vision of a regenerative
+          world, based on four pillars:<br />
+          Renewable energy, Full material circularity, Regenerative systems, Climate
+          & social equity
+        </div>
       </div>
       <video
         id="cpp-video"
@@ -132,7 +134,7 @@ class VideoSlider extends HTMLElement {
         />
       </video>
     </div>
-  </div>`;
+    `;
   }
 }
 
