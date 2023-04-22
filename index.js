@@ -64,12 +64,15 @@ class VideoSlider extends HTMLElement {
           height: 65%;
           display: block;
           margin: auto;
+          max-width: 100%;
         }
         .cpp-text-block {
-          padding: 0 3em;
+          padding: 0 1em;
           text-align: center;
           color: #fff;
           margin: auto;
+          width: auto!important;
+          max-width: 1000px;
         }
         .cpp-text-block-description {
           color: #fff;
