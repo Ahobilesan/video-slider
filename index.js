@@ -58,12 +58,8 @@ class VideoSlider extends HTMLElement {
     window.requestAnimationFrame(handleScroll);
   }
   render() {
-    this.innerHTML = `<div id="cpp-slider-wrapper">
+    this.innerHTML = `
       <style>
-        #cpp-slider-wrapper {
-          top: 0;
-          position: sticky;
-        }
         #cpp-video {
           height: 65%;
           display: block;
@@ -73,6 +69,7 @@ class VideoSlider extends HTMLElement {
           padding: 0 3em;
           text-align: center;
           color: #fff;
+          margin: auto;
         }
         .cpp-text-block-description {
           color: #fff;
@@ -133,7 +130,6 @@ class VideoSlider extends HTMLElement {
           data-src="https://drive.google.com/uc?id=1On40pTelPp4ZEBZI6LZghheTkpMznBsy"
         />
       </video>
-    </div>
     `;
   }
 }
