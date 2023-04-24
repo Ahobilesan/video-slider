@@ -1,62 +1,83 @@
 class VideoSlider extends HTMLElement {
+  videoEle = null;
+  playbackConst = 900;
   maxScroll = 0;
+  scrollTop = 0;
+  initialY = 0;
+
+  /* Run only the last event on a series of triggered events */
+  timeout = undefined;
+  handleSeries = (event) => {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(this.handleScrollTop(event), 6000);
+  };
+
   connectedCallback() {
     this.render();
-    this.init();
+    this.videoEle = this.querySelector("#cpp-video");
+    const wrapper = document.getElementById("cpp-slider-wrapper");
+
+    this.videoEle.addEventListener("loadedmetadata", this.loadMetaData);
+
+    wrapper.addEventListener(
+      "touchstart",
+      ({ touches }) => (this.initialY = touches[0].clientY)
+    );
+    wrapper.addEventListener("touchend", this.handleSeries);
+    wrapper.addEventListener("wheel", this.handleSeries);
+    window.requestAnimationFrame(this.handleScroll);
   }
-  init() {
-    const cpp_playbackConst = 900,
-      cpp_block = document.getElementById("cpp-slider"),
-      cpp_video = document.getElementById("cpp-video"),
-      cpp_wrapper = document.getElementById("cpp-slider-wrapper");
 
-    cpp_video.addEventListener("loadedmetadata", () => {
-      this.maxScroll = Math.floor(cpp_video.duration) * cpp_playbackConst;
-      cpp_block.style.height = this.maxScroll + "px";
-    });
+  loadMetaData = () => {
+    const cpp_block = document.getElementById("cpp-slider");
+    this.maxScroll = Math.floor(this.videoEle.duration) * this.playbackConst;
+    cpp_block.style.height = this.maxScroll + "px";
+  };
 
-    let scrollTop = 0;
-    cpp_wrapper.addEventListener("wheel", ({ deltaY }) => {
-      const scrollValue = scrollTop + deltaY;
-      if (scrollValue < this.maxScroll) {
-        scrollTop = scrollValue;
-      }
-      if (scrollValue < 1) {
-        scrollTop = 0;
-      }
-    });
-
-    function toggleText(val) {
-      const cpp_text1 = document.getElementById("cpp-text-1"),
-        cpp_text2 = document.getElementById("cpp-text-2"),
-        cpp_text3 = document.getElementById("cpp-text-3");
-
-      if (val > 0 && val < 3) {
-        cpp_text1.classList.add("cpp-show");
-      } else {
-        cpp_text1.classList.remove("cpp-show");
-      }
-      if (val > 3 && val < 6) {
-        cpp_text2.classList.add("cpp-show");
-      } else {
-        cpp_text2.classList.remove("cpp-show");
-      }
-      if (val > 6 && val < 8) {
-        cpp_text3.classList.add("cpp-show");
-      } else {
-        cpp_text3.classList.remove("cpp-show");
-      }
+  handleScrollTop = (e) => {
+    if (!e || !e.type) return;
+    const movedHeight =
+      e.type.indexOf("touchend") !== -1
+        ? (this.initialY - e.changedTouches[0].clientY)
+        : e.deltaY;
+    const scrollValue = this.scrollTop + movedHeight;
+    if (scrollValue < this.maxScroll) {
+      this.scrollTop = scrollValue;
     }
-
-    function handleScroll() {
-      cpp_video.currentTime = scrollTop / cpp_playbackConst;
-      toggleText(scrollTop / cpp_playbackConst);
-
-      window.requestAnimationFrame(handleScroll);
+    if (scrollValue < 1) {
+      this.scrollTop = 0;
     }
+  };
 
-    window.requestAnimationFrame(handleScroll);
+  handleScroll = () => {
+    this.videoEle.currentTime = this.scrollTop / this.playbackConst;
+    this.toggleText(this.scrollTop / this.playbackConst);
+
+    window.requestAnimationFrame(this.handleScroll.bind(this));
+  };
+
+  toggleText(val) {
+    const cpp_text1 = this.querySelector("#cpp-text-1"),
+      cpp_text2 = this.querySelector("#cpp-text-2"),
+      cpp_text3 = this.querySelector("#cpp-text-3");
+
+    if (val > 0 && val < 3) {
+      cpp_text1.classList.add("cpp-show");
+    } else {
+      cpp_text1.classList.remove("cpp-show");
+    }
+    if (val > 3 && val < 6) {
+      cpp_text2.classList.add("cpp-show");
+    } else {
+      cpp_text2.classList.remove("cpp-show");
+    }
+    if (val > 6 && val < 8) {
+      cpp_text3.classList.add("cpp-show");
+    } else {
+      cpp_text3.classList.remove("cpp-show");
+    }
   }
+
   render() {
     this.innerHTML = `
       <style>
